@@ -8,10 +8,6 @@
 //	=========================== Preference vars ===========================
 
 bool enabled;
-
-//	=========================== Other vars ===========================
-
-int startupDelay = 5;
 HBPreferences *preferences;
 
 //	=========================== Debugging stuff ===========================
@@ -87,6 +83,9 @@ HBPreferences *preferences;
 @interface BBBulletin : NSObject
 @property (nonatomic,readonly) NSString * sectionDisplayName; 
 @property (nonatomic,copy) NSString * sectionID;
+@property (nonatomic,copy) NSString * title; 
+@property (nonatomic,copy) NSString * subtitle; 
+@property (nonatomic,copy) NSString * message; 
 @end
 
 
@@ -102,28 +101,24 @@ HBPreferences *preferences;
 
 %end
 
-/*
-%hook SBNotificationBannerDestination
-	-(void)postNotificationRequest:(id)arg1 {
-		//[Debug Log:[NSString stringWithFormat:@"postNotificationRequest: %@", arg1]];
-		%orig;
-	}
-%end
-*/
-
 %hook NCBulletinNotificationSource
-	- (void)observer:(id)arg1 addBulletin:(id)arg2 forFeed:(NSUInteger)arg3 {
+	// Not sure if this is needed. Doesn't seem to get called
+	/*- (void)observer:(id)arg1 addBulletin:(id)arg2 forFeed:(NSUInteger)arg3 {
 		%orig;
 		//[Debug Log:@"- (void)observer:(id)arg1 addBulletin:(id)arg2 forFeed:(NSUInteger)arg3;"];
 		[Debug Log:[NSString stringWithFormat:@"bulletin:%@", arg2]];
-	}
+	}*/
+
 	- (void)observer:(id)arg1 addBulletin:(id)arg2 forFeed:(NSUInteger)arg3 playLightsAndSirens:(BOOL)arg4 withReply:(id /* CDUnknownBlockType */)arg5 {
 		[Debug Log:@"- (void)observer:(id)arg1 addBulletin:(id)arg2 forFeed:(NSUInteger)arg3;"];
-		if (![[arg2 sectionID] isEqualToString:@"com.apple.shortcuts"])
-			%orig;
+		[Debug Log:[NSString stringWithFormat:@"bundleID: %@  title: %@  subtitle: %@  message: %@", [arg2 sectionID], [arg2 title], [arg2 subtitle], [arg2 message]]];
+
+		NSString *automationStr = @"Running your automation";
+		if (enabled && [[arg2 sectionID] isEqualToString:@"com.apple.shortcuts"] && [[arg2 message] isEqualToString:automationStr])
+			return;
+		%orig;
 	}
 %end
-
 
 
 //	=========================== Constructor stuff ===========================
@@ -131,13 +126,7 @@ HBPreferences *preferences;
 %ctor {
 	[Debug Log:[NSString stringWithFormat:@"============== %@ started ==============", TWEAK_NAME]];
 
-	/*
 	preferences = [[HBPreferences alloc] initWithIdentifier:BUNDLE];
-
 	[preferences registerBool:&enabled default:true forKey:@"kEnabled"];
-
-	NSString *bundleID = NSBundle.mainBundle.bundleIdentifier;
-	if ([bundleID isEqualToString:@"com.apple.springboard"]) {}
-	*/
 
 }
