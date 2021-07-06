@@ -1,0 +1,12 @@
+{
+	"title": "ShutupShortcuts",
+	"description": "This tweak is under development and may or may not have proper functionality. Install at your own risk.",
+	"compatibility": "Made for iOS 14",
+	"screenshots": ["screenshot1.png"],
+	"changelog": [
+		{
+			"version": "1.0.0 (Not yet)",
+			"changes": ["Initial Release"]
+		}
+	]
+}
