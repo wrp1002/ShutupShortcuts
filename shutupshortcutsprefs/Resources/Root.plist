@@ -10,7 +10,7 @@
 			<key>label</key>
 			<string>Options</string>
 			<key>footerText</key>
-			<string>Only notifications that contain "Running your automation" are blocked. If this is enabled, all notifications from Shortcuts will be blocked.</string>
+			<string>Only notifications that contain "Running your automation" are blocked by default. If this is enabled, all notifications from Shortcuts will be blocked.</string>
 		</dict>
 		<dict>
 			<key>cell</key>
