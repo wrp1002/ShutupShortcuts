@@ -9,6 +9,7 @@
 
 bool enabled;
 bool disableAll;
+NSString *automationStr;
 HBPreferences *preferences;
 
 //	=========================== Debugging stuff ===========================
@@ -113,8 +114,8 @@ HBPreferences *preferences;
 	- (void)observer:(id)arg1 addBulletin:(id)arg2 forFeed:(NSUInteger)arg3 playLightsAndSirens:(BOOL)arg4 withReply:(id /* CDUnknownBlockType */)arg5 {
 		//[Debug Log:@"- (void)observer:(id)arg1 addBulletin:(id)arg2 forFeed:(NSUInteger)arg3;"];
 		//[Debug Log:[NSString stringWithFormat:@"bundleID: %@  title: %@  subtitle: %@  message: %@", [arg2 sectionID], [arg2 title], [arg2 subtitle], [arg2 message]]];
-
-		NSString *automationStr = @"Running your automation";
+		[Debug Log:automationStr];
+		[Debug Log:[arg2 message]];
 
 		if (!enabled || ![[arg2 sectionID] isEqualToString:@"com.apple.shortcuts"])
 			return %orig;
@@ -135,5 +136,6 @@ HBPreferences *preferences;
 	preferences = [[HBPreferences alloc] initWithIdentifier:BUNDLE];
 	[preferences registerBool:&enabled default:true forKey:@"kEnabled"];
 	[preferences registerBool:&disableAll default:false forKey:@"kDisableAll"];
+	[preferences registerObject:&automationStr default:@"Running your automation" forKey:@"kAutomationStr"];
 
 }

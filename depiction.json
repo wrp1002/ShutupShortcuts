@@ -7,6 +7,10 @@
 		{
 			"version": "1.0.0",
 			"changes": ["Initial Release"]
+		},
+		{
+			"version": "1.1.0",
+			"changes": ["Added option to customize notification message text to block"]
 		}
 	]
 }

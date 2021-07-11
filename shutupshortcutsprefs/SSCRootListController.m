@@ -7,7 +7,7 @@
 		_specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
 	}
 
-	NSArray *chosenIDs = @[@"kDisableAll", @"kDisableAllGroup"];
+	NSArray *chosenIDs = @[@"kAutomationStr"];
 	self.savedSpecifiers = (self.savedSpecifiers) ?: [[NSMutableDictionary alloc] init];
 	for(PSSpecifier *specifier in _specifiers) {
 		if([chosenIDs containsObject:[specifier propertyForKey:@"id"]])
@@ -17,15 +17,19 @@
 	return _specifiers;
 }
 
+-(void)_returnKeyPressed:(id)arg1 {
+	[self.view endEditing:YES];
+}
+
 -(void)setPreferenceValue:(id)value specifier:(PSSpecifier *)specifier {
 	[super setPreferenceValue:value specifier:specifier];
 
 	NSString *key = [specifier propertyForKey:@"key"];
-	if([key isEqualToString:@"kEnabled"]) {
+	if([key isEqualToString:@"kDisableAll"]) {
 		if([value boolValue])
-			[self insertContiguousSpecifiers:@[self.savedSpecifiers[@"kDisableAllGroup"], self.savedSpecifiers[@"kDisableAll"]] afterSpecifierID:@"kEnabled" animated:YES];
+			[self removeSpecifierID:@"kAutomationStr" animated:YES];
 		else
-			[self removeSpecifierID:@"kDisableAllGroup" animated:YES];
+			[self insertSpecifier:self.savedSpecifiers[@"kAutomationStr"] afterSpecifierID:@"kDisableAll" animated:YES];
 	}
 }
 
@@ -33,17 +37,25 @@
 	[super reloadSpecifiers];
 
 	HBPreferences *prefs = [[HBPreferences alloc] initWithIdentifier:@"com.wrp1002.shutupshortcuts"];
-	if(![prefs boolForKey:@"kEnabled"])
-		[self removeSpecifierID:@"kDisableAllGroup" animated:NO];
+	if([prefs boolForKey:@"kDisableAll"])
+		[self removeSpecifierID:@"kAutomationStr" animated:NO];
 }
 
--(void)viewWillAppear:(BOOL)animated {
-	[super viewWillAppear:animated];
+- (void)loadView {
+    [super loadView];
+    ((UITableView *)[self table]).keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
 	[self reloadSpecifiers];
+	NSLog(@"ShutupShortcuts: loadview()");
 }
 
 -(void)Respring {
 	[HBRespringController respring];
+}
+
+-(void)ResetSettings {
+	HBPreferences *prefs = [[HBPreferences alloc] initWithIdentifier: @"com.wrp1002.shutupshortcuts"];
+	[prefs removeAllObjects];
+	[self Respring];
 }
 
 -(void)OpenGithub {
